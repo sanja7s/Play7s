@@ -12,7 +12,7 @@ sys.stdout.flush()
 
 lineCount = 0
 
-def rndSample(streamS, k):
+def rndSample(k, streamS):
 	"""
 	picks a random (representative) 
 	sample of size k from the streamS
@@ -26,30 +26,33 @@ def rndSample(streamS, k):
 		yield v
 
 
-def internalTest(k=5):
-	print [el for el in rndSample(testString, k)]
+def printSample(k, streamS):
+	for el in rndSample(k, streamS):
+		sys.stdout.write(str(el) + ' ')
+	print
 
+
+def internalTest(k=100):
+
+	print "*** first test case ***"
+	print "*** given test string and k = 5 ***"
+	k = 5
+	testString = "THEQUICKBROWNFOXJUMPSOVERTHELAZYDOG"
+	print testString
+	printSample(k, testString)
+	print
+	
+
+	print "*** second test case ***"
+	print "*** randomly generated large test string and k = 1000 ***"
 	largeSize = 1000000
 	a = 0
 	b = 10000
-	testString2 = (b - a) * np.random.random(largeSize) + a 
-
-	print [el for el in rndSample(testString2, k)]
-
-	testString3 = np.random.randint(0,largeSize,largeSize)
-	print testString3
-	print [el for el in rndSample(testString3, k)]
-	k = 5
-
-	testString = "THEQUICKBROWNFOXJUMPSOVERTHELAZYDOG"
-
-	rndIndices = np.random.random_integers(0,20,k)
-
-
-	rndValues = [testString[i] for i in rndIndices]
-
-
-	print rndValues
+	k = 1000
+	testString2 = np.random.randint(0,largeSize,largeSize)
+	print testString2
+	printSample(k, testString2)
+	print
 
 
 
@@ -57,9 +60,8 @@ def processInput(k, line):
 	global lineCount
 	lineCount += 1
 	print str(lineCount) + ': ',
-	for el in rndSample(line.rstrip(), k):
-		sys.stdout.write(str(el))
-	print
+	printSample(k, line.rstrip())
+	
 
 def readStdin():
 	global lineCount
@@ -86,6 +88,6 @@ def promptUser():
 
 if __name__ == "__main__":
 	if '-' in sys.argv:
-		readStdin()
+		internalTest()
 	else:
 		promptUser()
