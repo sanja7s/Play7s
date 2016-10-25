@@ -8,6 +8,7 @@
 import numpy as np
 import heapq
 import sys
+import string
 sys.stdout.flush()
 
 lineCount = 0
@@ -28,7 +29,7 @@ def rndSample(k, streamS):
 
 def printSample(k, streamS):
 	for el in rndSample(k, streamS):
-		sys.stdout.write(str(el) + ' ')
+		sys.stdout.write(str(el))
 	print
 
 
@@ -44,17 +45,28 @@ def internalTest(k=100):
 	
 
 	print "*** second test case ***"
-	print "*** randomly generated large test string and k = 1000 ***"
+	print "*** randomly generated 1M integer string and k = 100 ***"
 	largeSize = 1000000
 	a = 0
 	b = 10000
-	k = 1000
+	k = 100
 	testString2 = np.random.randint(0,largeSize,largeSize)
 	print testString2
 	printSample(k, testString2)
 	print
 
-
+	print "*** third test case ***"
+	print "*** randomly generated 1M characters string and k = 100 ***"
+	largeSize = 1000000
+	k = 100
+	#testString2 = np.random.randint(0,largeSize,largeSize)
+	#lettersNumbers = np.array(string.ascii_letters + string.digits, dtype=char)
+	#print lettersNumbers.size
+	#testString3 = ''.join([np.random.choice(lettersNumbers) for n in xrange(largeSize)])
+	testString3 = ''.join([str(unichr(el%26 + 65)) for el in testString2])
+	print testString3
+	printSample(k, testString3)
+	print
 
 def processInput(k, line):
 	global lineCount
