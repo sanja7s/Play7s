@@ -6,6 +6,7 @@ __pycache__/
 # by 7s
 *.pdf
 .DS_store
+*.txt
 
 # C extensions
 *.so
