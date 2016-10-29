@@ -14,7 +14,7 @@ def reservoir_sampling(k, sample, data, processedValues):
 	"""
 		uses probability calculation that after first k elements that we put in
 		the sample or reservoir, each new element at a position j in the stream
-		should be added with probability 1/j to the sample and, in that case,
+		should be added with probability k/j to the sample and, in that case,
 		a random one from the elements currently saved should be removed. 
 		*processedValues is an array of one int so to pass it by reference
 	"""
@@ -42,16 +42,18 @@ def print_sample(sample):
 
 
 # this and function below adapt to stdin input type 
-# adapted from (source https://gist.github.com/steakknife/8280661)
+# adapted from source https://gist.github.com/steakknife/8280661
 def read_from_stdin_text(fn, k, sample, buffer_size, processedValues):
 	while True:
 		buf = sys.stdin.readline(buffer_size)
 		if not buf:
 			break
+		# remove if newlines should be sampled 
+		buf = buf.strip('\r\n')
 		fn(k, buf, sample, processedValues)
 
 # this and function above adapt to stdin input type 
-# adapted from (source https://gist.github.com/steakknife/8280661)
+# adapted from source https://gist.github.com/steakknife/8280661
 def read_from_stdin_binary(fn, k, sample, buffer_size, processedValues):
 	while True:
 		buf = sys.stdin.read(buffer_size)
@@ -59,6 +61,8 @@ def read_from_stdin_binary(fn, k, sample, buffer_size, processedValues):
 			continue
 		if not buf:
 			break
+		# remove if newlines should be sampled 
+		buf = buf.strip('\r\n')
 		fn(k, buf, sample, processedValues)
 
 # depending on the platform and stdin input available, invoke the function
@@ -155,7 +159,7 @@ def get_sample_size():
 
 if __name__ == "__main__":
 	""" 
-		First option: If you invoke this program with "-" as argument it runs several internal tests.
+		First option: if you invoke this program with "-" as argument it runs several internal tests.
 
 		Second option: in any other case, you can pipe in arguments from stdin. The program expects
 					k in the first line and treats the rest of the input until EOF as the stream.
@@ -165,13 +169,16 @@ if __name__ == "__main__":
 	if '-' in sys.argv:
 		internal_tests()
 	else:
+		# arbitrary size 
 		BUFFER_SIZE=4096
 		k = get_sample_size()
 		if k:
+			# if we know the required sample size, read the stream
 			sample = []
 			processedValues = [0]
 			read_from_stdin(lambda k, data, sample, processedValues: reservoir_sampling(k, sample, data, processedValues), \
 				k, sample, BUFFER_SIZE, processedValues)
+			print 
 			print 'STREAM SAMPLE'
 			print_sample(sample)
 
