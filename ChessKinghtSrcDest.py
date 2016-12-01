@@ -1,4 +1,14 @@
-import numpy
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+"""
+	author: sanja7s
+	---------------
+	write answer(src,dest) function that returns minimum
+	number of steps between two positions on a chess board
+	that a knight can take. Knights move in L shape moves.
+
+
+"""
 
 # possible steps the knight can
 # take from the src node
@@ -10,81 +20,82 @@ def step(src):
 	d = []
 
 	# left moves
-	if j >= 2:
+	if j >= 1:
 		if i >= 2:
 			# left moves up
-			s = src - 8 - 2
-			d.append(s)
 			s = src - 16 - 1
 			d.append(s)
 		if i <= 5:
-			# left moves down
-			s = src + 8 - 2
-			d.append(s)
 			s = src + 16 - 1
 			d.append(s)
-	if j <= 5:
+		if j >= 2:
+			if i >= 1:
+				s = src - 8 - 2
+				d.append(s)	
+			if i <= 6:
+			# left moves down
+				s = src + 8 - 2
+				d.append(s)	
+
+
+	if j <= 6:
 		if i >= 2:
 			# right moves up
-			s = src - 8 + 2
-			d.append(s)
 			s = src - 16 + 1
 			d.append(s)
 		if i <= 5:
 			# right moves down
-			s = src + 8 + 2
-			d.append(s)
 			s = src + 16 + 1
 			d.append(s)
+		if j <= 5:
+			if i >= 1:
+				s = src - 8 + 2
+				d.append(s)
+			if i <= 6:
+				s = src + 8 + 2
+				d.append(s)
+
+
 	return d
 
-def answ(src, dest, m, visited):
-	if m[src,dest]:
-		return
-	visited[src] = 1
-	# possible step set
-	d = step(src)
-	print src, dest, d
-	# if one of them is dest
-	if dest in d:
-		# assign distance 1
-		m[src, dest] = 1
-		m[dest, src] = 1
-		return
-	s = []
-	for el in d:
-		if visited[el]:
-			s.append(m[el, dest])
-			continue
-		m[src,el] = 1
-		m[el,src] = 1
-		if m[el, dest] == 0:
-			answ(el, dest, m, visited)
-		s.append(m[el, dest])
-	m[src, dest] = 1 + int(min(s)) 
-	m[dest, src] = 1 + int(min(s)) 
-	print s
-	
-def answ2(src, dest, visited):
+# BFS algorithm. It searches in levels
+# all the steps from the source node;
+# marking the nodes that are already visited.
+# the algorithm stops when it reaches dest,
+# this will be the minimum number of steps
+# so the search is not exhaustive, as I first
+# tried with recurisve algorithms ;)	
+def answer(src, dest):
+	visited = [0]*64
+	if src == dest:
+		return 0
 	visited[src] = 1
 	d = step(src)
-	if dest in d:
-		return 1
-	s = []
-	for el in d:
-		if not visited[el]:
-			n = answ2(el, dest, visited)
-			s.append(n)
-	
-	if s == []:
-		return 1000000
-	return 1 + int(min(s)) 
+	print d
+	i = 0
+	while True:
+		i += 1
+		d1 = []
+		for node in d:
+			if not visited[node]:
+				#print node
+				visited[node] = 1
+				if node == dest:
+					return i
+				for el in step(node):
+					d1.append(el)
+		if set(d) == set(d1):
+			return -1
+		d = set(d1)
+		print d
 
-def answer (src, dest):
-    m = numpy.zeros(shape=(64,64))
-    visited = numpy.zeros(shape=(64))
-    answ(src, dest, m, visited)
-    return int(m[src,dest])  
 
-visited = numpy.zeros(shape=(64))
-print answ2(19,44,visited)
+# this is a check for all possible pairs
+# of positions. Moreover, it is a test of
+# speed as eariler versions of my code did
+# not finish for some combination of src, dest
+def test():		
+	for i in range (64):
+		for j in range(64):
+			print i, j, answer(i, j)
+
